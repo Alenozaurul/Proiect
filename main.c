@@ -1,6 +1,6 @@
 #include<stdbool.h>
 #include<stdio.h>
-#include"SDL2/SDL.h"
+#include<SDL2/SDL.h>
 
 
 const int screen_width = 640;
