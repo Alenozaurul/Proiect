@@ -1,11 +1,16 @@
-MAIN = main
+MAIN = side
+EXE = side
 
-CC = g++ 
+CC = gcc
 
-FLAGS = -Wall
+HEADERS = sdlhead
 
-all: $(MAIN)
-	$(CC) $(MAIN).c $(FLAGS) -lSDL2 -o $(MAIN)
- 
+FLAGS = -Wall -lSDL2
+
+all: $(MAIN).c  $(HEADERS).c
+	$(CC) $(MAIN).c $(FLAGS) $(HEADERS).c -o $(MAIN)
+
+	./$(EXE)
+
 clean:
 	rm $(MAIN)
