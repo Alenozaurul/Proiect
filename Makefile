@@ -3,14 +3,11 @@ EXE = side
 
 CC = gcc
 
-HEADERS = sdlhead
-
 FLAGS = -Wall -lSDL2
 
-all: $(MAIN).c  $(HEADERS).c
-	$(CC) $(MAIN).c $(FLAGS) $(HEADERS).c -o $(MAIN)
-
+all: $(MAIN).c 
+	$(CC) $(MAIN).c $(FLAGS) -o $(EXE)
 	./$(EXE)
 
 clean:
-	rm $(MAIN)
+	rm $(EXE)
