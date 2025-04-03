@@ -1,13 +1,26 @@
-MAIN = main
+MAIN = main.c
 EXE = main
+
+LINKS = gamemodes.c sdl.c
 
 CC = gcc
 
 FLAGS = -Wall -lSDL2
 
-all: $(MAIN).c 
-	$(CC) $(MAIN).c $(FLAGS) -o $(EXE)
+
+
+all: $(MAIN) $(LINKS) 
+	$(CC) $(MAIN) $(LINKS) $(FLAGS) -o $(EXE)
 	./$(EXE)
 
+main.c: gamemodes.c
+	$(CC) -c $(MAIN) $(FLAGS)
+
+gamemodes.c: sdl.c
+	$(CC) -c gamemodes.c $(FLAGS)
+
+sdl.c:
+	$(CC) -c sdl.c $(FLAGS)
+
 clean:
-	rm $(EXE)
+	rm main main.o
