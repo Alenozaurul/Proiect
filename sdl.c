@@ -1,11 +1,6 @@
 #include <SDL2/SDL.h>
 
-#include "sdl.h"
-
-
-const int screen_width = 1024;
-const int screen_height = 768;
-
+#include "headers/sdl.h"
 
 SDL_Window *InitWindow()
 {
@@ -18,7 +13,7 @@ SDL_Window *InitWindow()
 	}
 
 	window = SDL_CreateWindow( "Alien Invasion", SDL_WINDOWPOS_UNDEFINED, 
-			SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, SDL_WINDOW_SHOWN );
+			SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH,WINDOW_HEIGHT, SDL_WINDOW_SHOWN );
 
 	if( !window )
 	{	

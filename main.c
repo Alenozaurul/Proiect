@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include<SDL2/SDL.h>
 
-#include "gamemodes.h"
+#include "headers/gamemodes.h"
 
 
 

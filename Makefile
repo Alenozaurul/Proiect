@@ -5,7 +5,7 @@ LINKS = gamemodes.c sdl.c
 
 CC = gcc
 
-FLAGS = -Wall -lSDL2
+FLAGS = -Wall -lSDL2 -lSDL2_ttf
 
 
 
