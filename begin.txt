@@ -1,0 +1,5 @@
+     ALIEN INVASION
+
+Press 0 to exit game
+Press 1 to start on NORMAL
+Press 2 to start on HARD

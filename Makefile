@@ -1,5 +1,5 @@
-MAIN = side
-EXE = side
+MAIN = main
+EXE = main
 
 CC = gcc
 
