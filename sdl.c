@@ -1,4 +1,7 @@
 #include <SDL2/SDL.h>
+#include <string.h>
+#include <SDL2/SDL_ttf.h>
+#include <stdbool.h>
 
 #include "headers/sdl.h"
 
@@ -36,6 +39,81 @@ SDL_Renderer *InitRenderer( SDL_Window *window )
 
 	return renderer;
 }
+
+TTF_Font *InitFont()
+{
+	if( TTF_Init() < 0 )
+	{
+		printf("%s\n", SDL_GetError());
+		return NULL;
+	}
+
+	TTF_Font *font = TTF_OpenFont( "Normal.ttf", 36 );
+
+	if( !font )
+	{
+		printf("%s\n", SDL_GetError());
+		return NULL;
+	}	
+
+	return font;
+}	
+
+bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
+{
+	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+	SDL_RenderClear( renderer );
+	SDL_Color textColor = { 255, 255, 255, 255 };
+	SDL_Surface *textSurface = TTF_RenderText_Solid( font, "9", textColor );
+	SDL_Texture *textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+
+	if( !textTexture  || !textSurface ) 
+	{
+		printf("%s\n", SDL_GetError());
+		return false;
+	}
+
+	SDL_Rect textRect; 
+	textRect.h = textSurface -> h;
+	textRect.w = textSurface -> w;
+	textRect.x = ( WINDOW_WIDTH / 2 ) - ( textRect.w / 2 );
+	textRect.y = ( WINDOW_HEIGHT / 2 ) - ( textRect.h / 2 );
+	printf("%i %i\n", textRect.x, textRect.y);
+	printf("%i %i\n", textRect.h, textRect.w);	
+	for( int i = 3; i >= 0; --i )
+	{		
+		if( !i ) 
+		{
+			textSurface = TTF_RenderText_Solid( font, "Start!", textColor );
+			textRect.h = textSurface -> h;
+			textRect.w = textSurface -> w;
+			printf("%i %i\n", textRect.h, textRect.w);	
+			textRect.x = ( WINDOW_WIDTH / 2 ) - ( textRect.w / 2 );
+			textRect.y = ( WINDOW_HEIGHT / 2 ) - ( textRect.h / 2 );
+			printf("%i %i\n", textRect.x, textRect.y);
+
+			textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+		}
+		else
+		{
+			char countdown[2];
+			sprintf( countdown, "%i", i );
+			textSurface = TTF_RenderText_Solid( font, countdown, textColor );
+			textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+		}
+
+	        SDL_RenderClear( renderer );	
+		SDL_RenderCopy( renderer, textTexture, NULL, &textRect );
+		SDL_RenderPresent( renderer );	
+		SDL_Delay( 1000 );
+	}
+	
+	SDL_DestroyTexture( textTexture );
+
+	return true;
+}
+
+
 
 void Quit( SDL_Window *window, SDL_Renderer *renderer)
 {
