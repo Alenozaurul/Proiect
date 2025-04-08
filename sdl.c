@@ -78,8 +78,6 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	textRect.w = textSurface -> w;
 	textRect.x = ( WINDOW_WIDTH / 2 ) - ( textRect.w / 2 );
 	textRect.y = ( WINDOW_HEIGHT / 2 ) - ( textRect.h / 2 );
-	printf("%i %i\n", textRect.x, textRect.y);
-	printf("%i %i\n", textRect.h, textRect.w);	
 	for( int i = 3; i >= 0; --i )
 	{		
 		if( !i ) 
@@ -87,11 +85,8 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 			textSurface = TTF_RenderText_Solid( font, "Start!", textColor );
 			textRect.h = textSurface -> h;
 			textRect.w = textSurface -> w;
-			printf("%i %i\n", textRect.h, textRect.w);	
 			textRect.x = ( WINDOW_WIDTH / 2 ) - ( textRect.w / 2 );
 			textRect.y = ( WINDOW_HEIGHT / 2 ) - ( textRect.h / 2 );
-			printf("%i %i\n", textRect.x, textRect.y);
-
 			textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
 		}
 		else

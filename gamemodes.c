@@ -29,14 +29,18 @@ void startGM1()
 void startGM2()
 {
 	SDL_Window *window = InitWindow();
-	if( !window )
+	SDL_Renderer *renderer = InitRenderer( window ); 
+	TTF_Font *font = InitFont();
+	if( !window || !renderer || !font )
+	{
+		Quit( window, renderer );
 		return;
+	}
 
-	SDL_Renderer *renderer = InitRenderer( window );
-	if( !renderer )
-		return;	
+	if( !StartGame( font, renderer ) )
+	{
+		return;
+	}
 
-
-	Quit( window, renderer);
+	Quit( window, renderer );
 }
-
