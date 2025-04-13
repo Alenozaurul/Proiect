@@ -10,17 +10,17 @@ FLAGS = -Wall -lSDL2 -lSDL2_ttf
 
 
 all: $(MAIN) $(LINKS) 
-	$(CC) $(MAIN) $(LINKS) $(FLAGS) -o $(EXE)
+	$(CC) $(EXE).c $(LINKS) $(FLAGS) -o $(EXE)
 	./$(EXE)
 
-main.c: gamemodes.c
+main.c: gamemodes.o
 	$(CC) -c $(MAIN) $(FLAGS)
 
-gamemodes.c: sdl.c
+gamemodes.c: sdl.o
 	$(CC) -c gamemodes.c $(FLAGS)
 
 sdl.c:
 	$(CC) -c sdl.c $(FLAGS)
 
 clean:
-	rm main main.o
+	rm main

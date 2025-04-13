@@ -9,6 +9,7 @@
 
 void startGM1()
 {
+
 	SDL_Window *window = InitWindow();
 	SDL_Renderer *renderer = InitRenderer( window ); 
 	TTF_Font *font = InitFont();
@@ -21,6 +22,11 @@ void startGM1()
 	if( !StartGame( font, renderer ) )
 	{
 		return;
+	}
+
+	while( Loop(window, renderer) )
+	{
+		;
 	}
 
 	Quit( window, renderer );

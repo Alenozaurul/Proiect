@@ -4,6 +4,8 @@
 #include <stdbool.h>
 
 #include "headers/sdl.h"
+#include "headers/spaceships.h"
+
 
 SDL_Window *InitWindow()
 {
@@ -96,7 +98,6 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 			textSurface = TTF_RenderText_Solid( font, countdown, textColor );
 			textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
 		}
-
 	        SDL_RenderClear( renderer );	
 		SDL_RenderCopy( renderer, textTexture, NULL, &textRect );
 		SDL_RenderPresent( renderer );	
@@ -104,10 +105,43 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	}
 	
 	SDL_DestroyTexture( textTexture );
-
 	return true;
 }
 
+bool Loop(SDL_Window *window, SDL_Renderer *renderer)
+{
+	const unsigned char *keys = SDL_GetKeyboardState( NULL );
+	SDL_Event event;
+	Player player;
+	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+	SDL_RenderClear ( renderer );
+
+
+	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+	
+	player.body.h = 50;
+	player.body.w = 50;
+	player.body.x = ( WINDOW_WIDTH / 2 ) - ( player.body.w / 2 );
+	player.body.y = ( WINDOW_HEIGHT / 2 ) - ( player.body.h / 2 );
+	
+	SDL_RenderFillRect( renderer, &player.body );
+	SDL_RenderPresent( renderer );
+
+	SDL_Delay(1000);
+
+	while( SDL_PollEvent( &event ) )
+	{
+		if( event.type == SDL_QUIT )
+			return false;
+		if( keys[SDL_SCANCODE_ESCAPE] )
+			return false;
+					
+
+	}
+
+
+	return true;
+}
 
 
 void Quit( SDL_Window *window, SDL_Renderer *renderer)
