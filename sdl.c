@@ -108,38 +108,59 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	return true;
 }
 
-bool Loop(SDL_Window *window, SDL_Renderer *renderer)
+bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player)
 {
 	const unsigned char *keys = SDL_GetKeyboardState( NULL );
 	SDL_Event event;
-	Player player;
 	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
 	SDL_RenderClear ( renderer );
 
 
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	
-	player.body.h = 50;
-	player.body.w = 50;
-	player.body.x = ( WINDOW_WIDTH / 2 ) - ( player.body.w / 2 );
-	player.body.y = ( WINDOW_HEIGHT / 2 ) - ( player.body.h / 2 );
-	
-	SDL_RenderFillRect( renderer, &player.body );
+	SDL_RenderFillRect( renderer, &( player -> body ) );
 	SDL_RenderPresent( renderer );
 
-	SDL_Delay(1000);
+	SDL_Delay(10);
 
 	while( SDL_PollEvent( &event ) )
 	{
-		if( event.type == SDL_QUIT )
-			return false;
-		if( keys[SDL_SCANCODE_ESCAPE] )
-			return false;
-					
+		switch( event.type )
+		{
+			case SDL_QUIT: 
+				return false;
+				break;
+		}
+	}	
 
+	if( keys[SDL_SCANCODE_W] )
+	{
+		if( player -> body.y >= 0 )
+			player -> body.y = player -> body.y - 10;
 	}
-
-
+						
+	if( keys[SDL_SCANCODE_S] )
+	{
+		if( player -> body.y <= WINDOW_HEIGHT - player -> body.h )
+			player -> body.y = player -> body.y + 10;
+	}
+	if( keys[SDL_SCANCODE_A] )
+	{
+		if( player -> body.x >= 0 )
+			player -> body.x = player -> body.x - 10;
+	}
+						
+	if( keys[SDL_SCANCODE_D] )
+	{
+		if( player -> body.x <= WINDOW_WIDTH - player -> body.w )
+			player -> body.x = player -> body.x + 10;
+	}
+	
+	if( keys[SDL_SCANCODE_ESCAPE] )
+	{
+		return false;
+	}
+	
 	return true;
 }
 

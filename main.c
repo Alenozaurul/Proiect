@@ -13,8 +13,6 @@ int main( int argc, char **argv )
 {	
 	system("cat begin.txt");
 	
-	while( gamemode )
-	{
 		printf("Gamemode: ");
 		scanf("%i", &gamemode);
 		printf("\n");
@@ -30,8 +28,6 @@ int main( int argc, char **argv )
 				break;
 		}
 
-
-	}
 
 	return 0;
 }

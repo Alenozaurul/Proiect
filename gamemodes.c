@@ -19,12 +19,18 @@ void startGM1()
 		return;
 	}
 
-	if( !StartGame( font, renderer ) )
-	{
-		return;
-	}
+	//if( !StartGame( font, renderer ) )
+	//{
+	//	return;
+	//}
 
-	while( Loop(window, renderer) )
+	Player player;
+	player.body.h = 50;
+	player.body.w = 50;
+	player.body.x = ( WINDOW_WIDTH / 2 ) - ( player.body.w / 2 );
+	player.body.y = ( WINDOW_HEIGHT / 2 ) - ( player.body.h / 2 );
+
+	while( Loop(window, renderer, &player) )
 	{
 		;
 	}
