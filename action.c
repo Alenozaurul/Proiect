@@ -33,17 +33,14 @@ void playerMovement( Player *player, const unsigned char *keys )
 
 void playerShooting( Player *player, const unsigned char *keys, int *reload )
 {
-	if ( keys[SDL_SCANCODE_SPACE] )
+	if( *reload <= 0 && keys[SDL_SCANCODE_SPACE] )
 	{
-		if( *reload <= 0 )
-		{
-			*reload = 30;
-			playerShoot( player );
-		}
-		else
-		{
-			--( *reload );
-		}
+		*reload = 20;
+		playerShoot( player );
+	}
+	else
+	{			
+		--( *reload );
 	}
 }
 

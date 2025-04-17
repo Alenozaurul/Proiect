@@ -37,7 +37,7 @@ void startGM1()
 		player.bullets[i].x = 0;
 		player.bullets[i].h = 0;
 	}
-	int reload = 30;
+	int reload = 0;
 	while( Loop(window, renderer, &player, &reload) )
 	{
 		;
