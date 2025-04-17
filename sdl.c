@@ -3,9 +3,10 @@
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 
+#include "headers/action.h"
 #include "headers/sdl.h"
 #include "headers/spaceships.h"
-
+#include "headers/gamemodes.h"
 
 SDL_Window *InitWindow()
 {
@@ -108,7 +109,7 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	return true;
 }
 
-bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player)
+bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, int *reload)
 {
 	const unsigned char *keys = SDL_GetKeyboardState( NULL );
 	SDL_Event event;
@@ -119,6 +120,12 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player)
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	
 	SDL_RenderFillRect( renderer, &( player -> body ) );
+	
+	for( int i = 0; i < 30; ++i )
+	 	if( player -> bullets[i].w != 0 )
+		{
+			SDL_RenderFillRect( renderer, &( player -> bullets[i] ) );
+		}
 	SDL_RenderPresent( renderer );
 
 	SDL_Delay(10);
@@ -132,30 +139,23 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player)
 				break;
 		}
 	}	
-
-	if( keys[SDL_SCANCODE_W] )
-	{
-		if( player -> body.y >= 0 )
-			player -> body.y = player -> body.y - 10;
-	}
-						
-	if( keys[SDL_SCANCODE_S] )
-	{
-		if( player -> body.y <= WINDOW_HEIGHT - player -> body.h )
-			player -> body.y = player -> body.y + 10;
-	}
-	if( keys[SDL_SCANCODE_A] )
-	{
-		if( player -> body.x >= 0 )
-			player -> body.x = player -> body.x - 10;
-	}
-						
-	if( keys[SDL_SCANCODE_D] )
-	{
-		if( player -> body.x <= WINDOW_WIDTH - player -> body.w )
-			player -> body.x = player -> body.x + 10;
-	}
 	
+	playerMovement( player, keys );
+	playerShooting( player, keys, reload );
+
+
+	for( int i = 0; i < 30; ++i )
+	{
+		if( player -> bullets[i].w != 0 )
+			player -> bullets[i].y -= 10;
+
+		if( player -> bullets[i].y <= 0 )
+		{
+			player -> bullets[i].w = 0;
+			player -> bullets[i].h = 0;
+		}
+	}
+
 	if( keys[SDL_SCANCODE_ESCAPE] )
 	{
 		return false;

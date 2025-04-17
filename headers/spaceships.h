@@ -5,6 +5,7 @@ typedef struct{
 	int health;
 	int atack;
 	SDL_Rect body;
+	SDL_Rect bullets[30];
 } Player;
 
 typedef struct{
