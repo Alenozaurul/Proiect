@@ -37,8 +37,28 @@ void startGM1()
 		player.bullets[i].x = 0;
 		player.bullets[i].h = 0;
 	}
+
+	Enemy enemy[30];
+	for( int i = 0; i <30; ++i )
+	{
+		enemy[i].body.w = 0;
+		enemy[i].body.h = 0;
+		enemy[i].body.x = 0;
+		enemy[i].body.y = 0;
+		
+		for( int j = 0; j < 30; ++j )
+		{
+			enemy[i].bullets[j].x = 0;
+			enemy[i].bullets[j].h = 0;
+			enemy[i].bullets[j].y = 0;
+			enemy[i].bullets[j].w = 0;
+		}
+	}
+
 	int reload = 0;
-	while( Loop(window, renderer, &player, &reload) )
+	int respawn = 50;
+	int reload_enemy[30] = {0};
+	while( Loop(window, renderer, &player, enemy, &reload, reload_enemy, &respawn) )
 	{
 		;
 	}

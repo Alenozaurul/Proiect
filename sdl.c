@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "headers/action.h"
+#include "headers/enemy.h"
 #include "headers/sdl.h"
 #include "headers/spaceships.h"
 #include "headers/gamemodes.h"
@@ -109,26 +110,25 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	return true;
 }
 
-bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, int *reload)
+bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *enemy, int *reload,
+	       	int *reload_enemy, int *respawn)
 {
 	const unsigned char *keys = SDL_GetKeyboardState( NULL );
 	SDL_Event event;
 	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
 	SDL_RenderClear ( renderer );
-
-
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-	
+
+
 	SDL_RenderFillRect( renderer, &( player -> body ) );
-	
+
 	for( int i = 0; i < 30; ++i )
-	 	if( player -> bullets[i].w != 0 )
+	{
+		if( player -> bullets[i].w > 0 )
 		{
 			SDL_RenderFillRect( renderer, &( player -> bullets[i] ) );
 		}
-	SDL_RenderPresent( renderer );
-
-	SDL_Delay(10);
+	}
 
 	while( SDL_PollEvent( &event ) )
 	{
@@ -139,23 +139,54 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, int *reloa
 				break;
 		}
 	}	
-	
 	playerMovement( player, keys );
 	playerShooting( player, keys, reload );
-
-
+	spawnEnemy( enemy, respawn );
+	enemyShooting( enemy, reload_enemy );
+	
 	for( int i = 0; i < 30; ++i )
 	{
-		if( player -> bullets[i].w != 0 )
+		if( player -> bullets[i].w > 0 )
+		{
 			player -> bullets[i].y -= 10;
-
-		if( player -> bullets[i].y <= 0 )
+			SDL_RenderFillRect( renderer, &( player -> bullets[i] ) );
+		}
+		if( player -> bullets[i].y < 0 )
 		{
 			player -> bullets[i].w = 0;
 			player -> bullets[i].h = 0;
 		}
+		
+		
+		if( enemy[i].body.w > 0 )
+		{
+			enemy[i].body.y += 1;
+			SDL_RenderFillRect( renderer, &( enemy[i].body ) );
+		}
+		if( enemy[i].body.y >= WINDOW_HEIGHT )
+		{
+			enemy[i].body.w = 0;
+			enemy[i].body.h = 0;
+		}
+
+		for( int j = 0; j < 30; ++j )
+		{
+			if( enemy[i].bullets[j].w > 0 )
+			{
+				enemy[i].bullets[j].y += 2;
+				SDL_RenderFillRect( renderer, &( enemy[i].bullets[j] ) );
+			}
+			if( enemy[i].bullets[j].y >= WINDOW_HEIGHT )
+			{
+				enemy[i].bullets[j].w = 0;
+				enemy[i].bullets[j].h = 0;
+			}
+		}
 	}
 
+	SDL_RenderPresent( renderer );
+	SDL_Delay(10);
+	
 	if( keys[SDL_SCANCODE_ESCAPE] )
 	{
 		return false;
