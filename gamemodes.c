@@ -25,6 +25,8 @@ void startGM1()
 	//}
 
 	Player player;
+	player.health = 100;
+	player.atack = 35;
 	player.body.h = 50;
 	player.body.w = 50;
 	player.body.x = ( WINDOW_WIDTH / 2 ) - ( player.body.w / 2 );
@@ -64,6 +66,8 @@ void startGM1()
 	}
 
 	Quit( window, renderer );
+
+	printf("\n\nGAME OVER\n\n");
 }
 
 void startGM2()

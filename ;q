@@ -149,11 +149,6 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 		if( player -> bullets[i].w > 0 )
 		{
 			player -> bullets[i].y -= 10;
-			for( int j = 0; j < 30; ++j )
-			       if( enemy[j].body.w > 0 )
-			       {
-					checkCollPB( player, &enemy[j], i );
-			       }
 			SDL_RenderFillRect( renderer, &( player -> bullets[i] ) );
 		}
 		if( player -> bullets[i].y < 0 )
@@ -161,42 +156,40 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 			player -> bullets[i].w = 0;
 			player -> bullets[i].h = 0;
 		}
-	}
-	for( int i = 0; i < 30; ++i )
-	{	
-		if( enemy[i].body.y >= WINDOW_HEIGHT )
-		{
-			enemy[i].body.w = 0;
-			enemy[i].body.h = 0;
 		
-		}
+		
 		if( enemy[i].body.w > 0 )
 		{
 			enemy[i].body.y += 1;
 			SDL_RenderFillRect( renderer, &( enemy[i].body ) );
-			
-			if( playerEnemy( player, &enemy[i] ) )
-				return false;
 		}
+		if( enemy[i].body.y >= WINDOW_HEIGHT )
+		{
+			enemy[i].body.w = 0;
+			enemy[i].body.h = 0;
+		}
+
 		for( int j = 0; j < 30; ++j )
 		{
-			if( enemy[i].bullets[j].y >= WINDOW_HEIGHT )
-			{
-				enemy[i].bullets[j].w = 0;
-				enemy[i].bullets[j].h = 0;
-			}
-				
+
 			if( enemy[i].bullets[j].w > 0 )
 			{
-				if( checkColl( &enemy[i], player, j ) )
+				if( checkColl( &enemy[i], player ) )
 				{
 					enemy[i].bullets[j].w = 0;
 					enemy[i].bullets[j].h = 0;
-					player -> health -= enemy[i].atack;	
+					player -> health -= 10;	
 					break;
 				}
 				enemy[i].bullets[j].y += 2;
 				SDL_RenderFillRect( renderer, &( enemy[i].bullets[j] ) );
+
+			}
+
+			if( enemy[i].bullets[j].y >= WINDOW_HEIGHT )
+			{
+				enemy[i].bullets[j].w = 0;
+				enemy[i].bullets[j].h = 0;
 			}
 		}
 	}
@@ -212,62 +205,27 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 	if( player -> health <= 0 )
 		 return false;
 
+	printf("%i\n", player -> health );
 	return true;
 }
 
-bool playerEnemy( Player *player, Enemy *enemy )
+bool checkColl( Enemy *enemy, Player *player )
 {
-	if( player -> body.x > enemy -> body.x + enemy -> body.w )
-		return false;
 	if( player -> body.x + player -> body.w < enemy -> body.x )
 		return false;
-	if( player -> body.y > enemy -> body.h + enemy -> body.y )
+
+	if( player -> body.x > enemy -> body.x + enemy -> body.w)
 		return false;
+	
 	if( player -> body.y + player -> body.h < enemy -> body.y )
 		return false;
-
-	return true;
-}
-bool checkColl( Enemy *enemy, Player *player, int j )
-{
-	if( player -> body.x + player -> body.w < enemy -> bullets[j].x )
-		return false;
-
-	if( player -> body.x > enemy -> bullets[j].x + enemy -> bullets[j].w)
-		return false;
 	
-	if( player -> body.y + player -> body.h < enemy -> bullets[j].y )
-		return false;
-	
-	if( player -> body.y > enemy -> bullets[j].y + enemy -> bullets[j].h )
+	if( player -> body.y > enemy -> body.y + enemy -> body.h )
 		return false;
 	
 	return true;
 }
 
-void checkCollPB( Player *player, Enemy *enemy, int i )
-
-{
-	if( player -> bullets[i].x > enemy -> body.x + enemy -> body.w )
-		return;
-	if( player -> bullets[i].x + player -> bullets[i].w < enemy -> body.x )
-		return;
-	if( player -> bullets[i].y > enemy -> body.y + enemy -> body.h )
-		return;
-	if( player -> bullets[i].h + player -> bullets[i].y < enemy -> body.y )
-		return;
-
-	enemy -> health -= player -> atack; 
-	player -> bullets[i].w = 0;
-	player -> bullets[i].h = 0;
-
-	if( enemy -> health <= 0)
-	{
-		enemy -> body.w = 0;
-		enemy -> body.h = 0;
-	}
-
-}
 
 void Quit( SDL_Window *window, SDL_Renderer *renderer)
 {

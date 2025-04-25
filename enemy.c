@@ -12,10 +12,13 @@ void spawnEnemy( Enemy *enemy, int *respawn )
                 		enemy[i].body.h = 40;
                 		enemy[i].body.x = 20 + ( rand() % 984 );
                 		enemy[i].body.y = 0;
+
+				enemy[i].health = ( rand() % 10 ) * 10;
+				enemy[i].atack = rand() % 25;
 				break;
 			}
 		}
-		*respawn = 150;
+		*respawn = ( rand() % 7 + 4 ) * 10;
 	}
 	else
 	{
