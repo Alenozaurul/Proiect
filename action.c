@@ -46,12 +46,12 @@ void playerShooting( Player *player, const unsigned char *keys, int *reload )
 
 void playerShoot( Player *player )
 {
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{
 		if( player -> bullets[i].w != 0)
 			continue;
 
-		player -> bullets[i].w = 20;
+		player -> bullets[i].w = 5;
 		player -> bullets[i].h = 20;
 		player -> bullets[i].x = player -> body.x + player -> body.w / 2;
 		player -> bullets[i].y = player -> body.y + player -> body.h / 2;

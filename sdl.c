@@ -110,19 +110,31 @@ bool StartGame( TTF_Font *font, SDL_Renderer *renderer )
 	return true;
 }
 
-bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *enemy, int *reload,
-	       	int *reload_enemy, int *respawn)
+int sc = -1;
+int base_hp = -1;
+int hp = -1;
+
+bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *player, Enemy *enemy, int *reload,
+	       	int *reload_enemy, int *respawn, int *base_health, int *score)
 {
+	if( base_health <= 0 )
+		return false;
+
 	const unsigned char *keys = SDL_GetKeyboardState( NULL );
 	SDL_Event event;
 	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
-	SDL_RenderClear ( renderer );
+ 	SDL_RenderClear ( renderer );
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+	
+		renderer = ShowScore( window, renderer, font, score );
+		renderer = ShowPlayerHealth( window, renderer, player, font );
+		renderer = ShowBaseHealth( window, renderer, font, base_health );
 
+	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 
 	SDL_RenderFillRect( renderer, &( player -> body ) );
 
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{
 		if( player -> bullets[i].w > 0 )
 		{
@@ -144,15 +156,15 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 	spawnEnemy( enemy, respawn );
 	enemyShooting( enemy, reload_enemy );
 	
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{
 		if( player -> bullets[i].w > 0 )
 		{
 			player -> bullets[i].y -= 10;
-			for( int j = 0; j < 30; ++j )
+			for( int j = 0; j < 20; ++j )
 			       if( enemy[j].body.w > 0 )
 			       {
-					checkCollPB( player, &enemy[j], i );
+					checkCollPB( player, &enemy[j], i, score );
 			       }
 			SDL_RenderFillRect( renderer, &( player -> bullets[i] ) );
 		}
@@ -162,13 +174,13 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 			player -> bullets[i].h = 0;
 		}
 	}
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{	
-		if( enemy[i].body.y >= WINDOW_HEIGHT )
+		if( enemy[i].body.y >= WINDOW_HEIGHT && enemy[i].body.w > 0 )
 		{
 			enemy[i].body.w = 0;
 			enemy[i].body.h = 0;
-		
+			*base_health -= 150;		
 		}
 		if( enemy[i].body.w > 0 )
 		{
@@ -178,12 +190,13 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 			if( playerEnemy( player, &enemy[i] ) )
 				return false;
 		}
-		for( int j = 0; j < 30; ++j )
+		for( int j = 0; j < 20; ++j )
 		{
-			if( enemy[i].bullets[j].y >= WINDOW_HEIGHT )
+			if( enemy[i].bullets[j].y >= WINDOW_HEIGHT && enemy[i].bullets[j].w > 0)
 			{
 				enemy[i].bullets[j].w = 0;
 				enemy[i].bullets[j].h = 0;
+				*base_health -= enemy[i].atack;
 			}
 				
 			if( enemy[i].bullets[j].w > 0 )
@@ -215,6 +228,53 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, Player *player, Enemy *ene
 	return true;
 }
 
+SDL_Renderer *ShowScore( SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, int *score )
+{
+	char sc[12];
+	sprintf( sc, "%i", *score );
+
+	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+	SDL_Color color = { 255, 255, 255, 255 };
+	SDL_Surface *textSurface = TTF_RenderText_Solid( font, sc, color );
+	SDL_Texture *textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+	
+	SDL_Rect text = { WINDOW_WIDTH - 150, 10, textSurface -> w, textSurface -> h };
+	SDL_RenderCopy( renderer, textTexture, NULL, &text );
+
+	return renderer;	
+}
+
+SDL_Renderer *ShowPlayerHealth( SDL_Window *window, SDL_Renderer *renderer, Player *player, TTF_Font *font )
+{
+	char health[4];
+	sprintf( health, "%i", player -> health );
+
+	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+	SDL_Color color = { 255, 255, 255, 255 };
+	SDL_Surface *textSurface = TTF_RenderText_Solid( font, health, color );
+	SDL_Texture *textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+	
+	SDL_Rect text = { 10, 10, textSurface -> w, textSurface -> h };
+	SDL_RenderCopy( renderer, textTexture, NULL, &text );	
+	return renderer;	
+}
+
+SDL_Renderer *ShowBaseHealth( SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, int *base_health )
+{
+	char health[5];
+	sprintf( health, "%i", *base_health );
+
+	SDL_SetRenderDrawColor( renderer, 0, 0, 0, 255 );
+	SDL_Color color = { 255, 255, 255, 255 };
+	SDL_Surface *textSurface = TTF_RenderText_Solid( font, health, color );
+	SDL_Texture *textTexture = SDL_CreateTextureFromSurface( renderer, textSurface );
+	
+	SDL_Rect text = { 100, 10, textSurface -> w, textSurface -> h };
+	SDL_RenderCopy( renderer, textTexture, NULL, &text );
+	return renderer;	
+}
+
+
 bool playerEnemy( Player *player, Enemy *enemy )
 {
 	if( player -> body.x > enemy -> body.x + enemy -> body.w )
@@ -245,7 +305,7 @@ bool checkColl( Enemy *enemy, Player *player, int j )
 	return true;
 }
 
-void checkCollPB( Player *player, Enemy *enemy, int i )
+void checkCollPB( Player *player, Enemy *enemy, int i, int *score )
 
 {
 	if( player -> bullets[i].x > enemy -> body.x + enemy -> body.w )
@@ -260,11 +320,13 @@ void checkCollPB( Player *player, Enemy *enemy, int i )
 	enemy -> health -= player -> atack; 
 	player -> bullets[i].w = 0;
 	player -> bullets[i].h = 0;
+	*score += 15;
 
 	if( enemy -> health <= 0)
 	{
 		enemy -> body.w = 0;
 		enemy -> body.h = 0;
+		*score += 100;
 	}
 
 }

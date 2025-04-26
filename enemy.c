@@ -4,7 +4,7 @@ void spawnEnemy( Enemy *enemy, int *respawn )
 {
 	if( *respawn <= 0 )
 	{
-		for( int i = 0; i < 30; ++i )
+		for( int i = 0; i < 20; ++i )
 		{
 			if( enemy[i].body.w == 0 )
 			{
@@ -29,7 +29,7 @@ void spawnEnemy( Enemy *enemy, int *respawn )
 
 void enemyShooting( Enemy *enemy, int *reload_enemy )
 {
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{
 		if( enemy[i].body.w > 0 && reload_enemy[i] <= 0 )
 		{
@@ -46,7 +46,7 @@ void enemyShooting( Enemy *enemy, int *reload_enemy )
 void enemyShoot( Enemy *enemy, int nr )
 {
 
-	for( int i = 0; i < 30; ++i )
+	for( int i = 0; i < 20; ++i )
 	{
 		if( enemy[nr].bullets[i].w == 0 )
 		{
