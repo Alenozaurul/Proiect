@@ -12,11 +12,12 @@ bool checkColl( Enemy *enemy, Player *player, int j );
 void checkCollPB( Player *player, Enemy *enemy, int j, int *score );
 bool playerEnemy( Player *player, Enemy *enemy );
 bool StartGame( TTF_Font *font, SDL_Renderer *renderer);
-
+bool coll( Player *player, SDL_Rect *enemy );
 
 bool Loop( SDL_Window *window, SDL_Renderer *renderer,
 	       	TTF_Font * font, Player *player, Enemy *enemy, int *reload,
-	       	int *reload_enemy, int *respawn, int *base_health, int *score );
+	       	int *reload_enemy, int *respawn, int *base_health, int *score,
+		int *time, SDL_Rect *buff );
 
 
 SDL_Renderer *ShowScore( SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, int *score );

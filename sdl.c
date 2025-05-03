@@ -9,6 +9,8 @@
 #include "headers/spaceships.h"
 #include "headers/gamemodes.h"
 
+int speed = 20;
+
 SDL_Window *InitWindow()
 {
 	SDL_Window *window = NULL;
@@ -115,7 +117,7 @@ int base_hp = -1;
 int hp = -1;
 
 bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *player, Enemy *enemy, int *reload,
-	       	int *reload_enemy, int *respawn, int *base_health, int *score)
+	       	int *reload_enemy, int *respawn, int *base_health, int *score, int *time, SDL_Rect *buff)
 {
 	if( base_health <= 0 )
 		return false;
@@ -126,12 +128,18 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
  	SDL_RenderClear ( renderer );
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	
-		renderer = ShowScore( window, renderer, font, score );
-		renderer = ShowPlayerHealth( window, renderer, player, font );
-		renderer = ShowBaseHealth( window, renderer, font, base_health );
+	renderer = ShowScore( window, renderer, font, score );
+	renderer = ShowPlayerHealth( window, renderer, player, font );
+	renderer = ShowBaseHealth( window, renderer, font, base_health );
 
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-
+	if( player -> health < 70 )
+		SDL_SetRenderDrawColor( renderer, 217, 217, 217, 255 );
+	if( player -> health < 50 )
+		SDL_SetRenderDrawColor( renderer, 135, 135, 135, 255 );
+	if( player -> health < 30 )
+		SDL_SetRenderDrawColor( renderer, 69, 69, 69, 255 );
+	
 	SDL_RenderFillRect( renderer, &( player -> body ) );
 
 	for( int i = 0; i < 20; ++i )
@@ -152,10 +160,11 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
 		}
 	}	
 	playerMovement( player, keys );
-	playerShooting( player, keys, reload );
+	playerShooting( player, keys, reload, speed );
 	spawnEnemy( enemy, respawn );
 	enemyShooting( enemy, reload_enemy );
 	
+	SDL_SetRenderDrawColor( renderer, 0, 0, 255, 255 );
 	for( int i = 0; i < 20; ++i )
 	{
 		if( player -> bullets[i].w > 0 )
@@ -174,6 +183,7 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
 			player -> bullets[i].h = 0;
 		}
 	}
+	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	for( int i = 0; i < 20; ++i )
 	{	
 		if( enemy[i].body.y >= WINDOW_HEIGHT && enemy[i].body.w > 0 )
@@ -185,7 +195,14 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
 		if( enemy[i].body.w > 0 )
 		{
 			enemy[i].body.y += 1;
+			if( enemy[i].health <= 30 )
+				SDL_SetRenderDrawColor( renderer, 56, 15, 64, 255 );
+			if( enemy[i].health <= 60 )
+				SDL_SetRenderDrawColor( renderer, 116, 30, 133, 255 );
+			else
+				SDL_SetRenderDrawColor( renderer, 169, 43, 194, 255 );
 			SDL_RenderFillRect( renderer, &( enemy[i].body ) );
+			SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 			
 			if( playerEnemy( player, &enemy[i] ) )
 				return false;
@@ -209,10 +226,50 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
 					break;
 				}
 				enemy[i].bullets[j].y += 2;
+				SDL_SetRenderDrawColor( renderer, 255, 0, 0, 255 );
 				SDL_RenderFillRect( renderer, &( enemy[i].bullets[j] ) );
+				SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 			}
 		}
 	}
+
+
+		SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
+		if( *time <= 0 )
+		{
+			*time = 800;
+			buff -> x = ( rand() % 970 ) + 50;
+			buff -> y = 300 + ( rand() % 300 );
+			buff -> w = 50;
+			buff -> h = 50;
+		}
+		if( buff -> w > 0 && ( rand() % 10 ) % 6 == 0 )
+		{
+			--buff -> w;
+			--buff -> h;
+		}
+		if( buff -> x <= 0 )
+		{
+			buff -> x = 0;
+			buff -> y = 0;
+			buff -> w = 0;
+			buff -> h = 0;
+		}
+		if( *time <= 400 )
+			speed = 20;
+		--*time;
+		if( buff -> w > 0 )
+		{
+			SDL_RenderFillRect( renderer, buff );
+			if( coll( player, buff ) )
+			{
+				buff -> w = 0;
+				buff -> h = 0;
+				*score += 100;
+				speed = 10;
+			}
+		}
+
 
 	SDL_RenderPresent( renderer );
 	SDL_Delay(10);
@@ -224,6 +281,19 @@ bool Loop(SDL_Window *window, SDL_Renderer *renderer, TTF_Font *font, Player *pl
 	
 	if( player -> health <= 0 )
 		 return false;
+
+	return true;
+}
+bool coll( Player *player, SDL_Rect *enemy )
+{
+	if( player -> body.x > enemy -> x + enemy -> w )
+		return false;
+	if( player -> body.x + player -> body.w < enemy -> x )
+		return false;
+	if( player -> body.y > enemy -> h + enemy -> y )
+		return false;
+	if( player -> body.y + player -> body.h < enemy -> y )
+		return false;
 
 	return true;
 }

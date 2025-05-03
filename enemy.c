@@ -50,8 +50,8 @@ void enemyShoot( Enemy *enemy, int nr )
 	{
 		if( enemy[nr].bullets[i].w == 0 )
 		{
-			enemy[nr].bullets[i].w = 10;
-			enemy[nr].bullets[i].h = 10;
+			enemy[nr].bullets[i].w = 5;
+			enemy[nr].bullets[i].h = 20;
 			enemy[nr].bullets[i].x = enemy[nr].body.x + enemy[nr].body.w / 2;
 			enemy[nr].bullets[i].y = enemy[nr].body.y + enemy[nr].body.h / 2;
 			break;

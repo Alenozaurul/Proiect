@@ -2,10 +2,11 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <SDL2/SDL_ttf.h>
+#include <time.h>
 
 #include "headers/gamemodes.h"
 #include "headers/sdl.h"
-
+#include "headers/action.h"
 
 void startGM1()
 {
@@ -19,10 +20,10 @@ void startGM1()
 		return;
 	}
 
-	//if( !StartGame( font, renderer ) )
-	//{
-	//	return;
-	//}
+	if( !StartGame( font, renderer ) )
+	{
+		return;
+	}
 
 	Player player;
 	player.health = 100;
@@ -63,14 +64,17 @@ void startGM1()
 
 	int base_health = 4000;
 	int score = 0;
-	while( Loop(window, renderer, font, &player, enemy, &reload, reload_enemy, &respawn, &base_health, &score) )
-	{
-		;
+	int time = 150;
+	SDL_Rect buff;
+
+	while( Loop(window, renderer, font, &player, enemy, &reload, reload_enemy, &respawn, &base_health, &score, &time, &buff) )
+	{;
+
 	}
 
 	Quit( window, renderer );
 
-	printf("\n\nGAME OVER\n\n");
+	printf("\n\nGAME OVER\nSCORE: %i\n\n\n\n", score);
 }
 
 void startGM2()
